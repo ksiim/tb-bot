@@ -3,10 +3,30 @@ import asyncio
 from models.databases import Session
 from models.dbs.models import *
 
-from sqlalchemy import insert, inspect, or_, select, text
+from sqlalchemy import insert, inspect, or_, select, text, update
 
 
 class Orm:
+    
+    @staticmethod
+    async def turn_to_admin(telegram_id):
+        async with Session() as session:
+            query = update(User).where(User.telegram_id == telegram_id).values(admin=True)
+            await session.execute(query)
+            await session.commit()
+    
+    @staticmethod
+    async def get_all_admins():
+        async with Session() as session:
+            query = select(User).where(User.admin == True)
+            admins = (await session.execute(query)).scalars().all()
+            return admins
+    
+    @staticmethod
+    async def add_item(item):
+        async with Session() as session:
+            session.add(item)
+            await session.commit()
     
     @staticmethod
     async def create_user(message):
