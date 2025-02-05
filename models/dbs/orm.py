@@ -9,6 +9,13 @@ from sqlalchemy import insert, inspect, or_, select, text, update
 class Orm:
     
     @staticmethod
+    async def get_text_by_name(name: str):
+        async with Session() as session:
+            query = select(Text).where(Text.name == name)
+            text = (await session.execute(query)).scalar_one_or_none()
+            return text
+    
+    @staticmethod
     async def turn_to_admin(telegram_id):
         async with Session() as session:
             query = update(User).where(User.telegram_id == telegram_id).values(admin=True)

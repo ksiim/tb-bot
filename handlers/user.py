@@ -31,7 +31,7 @@ async def send_start_message(message: Message):
 @dp.message(F.text == security_rules_label)
 async def security_rules_message_handler(message: Message):
     await message.answer(
-        text=rules_text
+        text=(await Orm.get_text_by_name('rules')).text
     )
     
 @dp.message(F.text == alert_potential_hazard_label)
